@@ -15,19 +15,18 @@ void AIRCRAFT::update_speed()
     this->_speed += this->_step_speed;
 }
 
-void AIRCRAFT::change_speed(int newspeed)
+void AIRCRAFT::change_speed(double newspeed)
 {
     if (newspeed == this->_speed) {
 		return;
 	}
     this->_changing_speed = (this->_fuel/2) + (this->_nb_missile/4);
-    this->_step_speed = (newspeed - this->_speed)/this->_changing_speed;
+    this->_step_speed = (newspeed - this->_speed)/ (double)this->_changing_speed;
 }
 
 void AIRCRAFT::update_alt()
 {
-    sparse_array<IBehaviours> &behaviours = regis->get_components<IBehaviours>();
-    size_t id = behaviours.get_index(*this);
+    size_t id = Utils::get_self_id_from(*this, this->regis);
     sparse_array<flight_data_t> &blackboxes = regis->get_components<flight_data_t>();
 
     if (this->_changing_alt <= 0) {
@@ -39,8 +38,7 @@ void AIRCRAFT::update_alt()
 
 void AIRCRAFT::change_alt(int newalt)
 {
-    sparse_array<IBehaviours> &behaviours = regis->get_components<IBehaviours>();
-    size_t id = behaviours.get_index(*this);
+    size_t id = Utils::get_self_id_from(*this, this->regis);
     sparse_array<flight_data_t> &blackboxes = regis->get_components<flight_data_t>();
 
     int coeff = 2;
@@ -58,8 +56,7 @@ void AIRCRAFT::change_alt(int newalt)
 
 void AIRCRAFT::update_orientation()
 {
-    sparse_array<IBehaviours> &behaviours = regis->get_components<IBehaviours>();
-    size_t id = behaviours.get_index(*this);
+    size_t id = Utils::get_self_id_from(*this, this->regis);
     sparse_array<flight_data_t> &blackboxes = regis->get_components<flight_data_t>();
 
     if (this->_changing_orientation <= 0) {
@@ -73,8 +70,7 @@ void AIRCRAFT::update_orientation()
 
 void AIRCRAFT::change_orientation(double neworientation)
 {
-    sparse_array<IBehaviours> &behaviours = regis->get_components<IBehaviours>();
-    size_t id = behaviours.get_index(*this);
+    size_t id = Utils::get_self_id_from(*this, this->regis);
     sparse_array<flight_data_t> &blackboxes = regis->get_components<flight_data_t>();
 
     double orientation_diff = 0;
@@ -91,20 +87,79 @@ void AIRCRAFT::change_orientation(double neworientation)
     this->_step_orientation = orientation_diff / this->_changing_orientation;
 }
 
+void AIRCRAFT::move()
+{
+    size_t id = Utils::get_self_id_from(*this, this->regis);
+    sparse_array<flight_data_t> &blackboxes = regis->get_components<flight_data_t>();
+    adwg::Vector2<double> coords_heading;
+    adwg::Vector2<double> res_coords;
+
+    this->update_speed();
+    this->update_orientation();
+    this->update_alt();
+
+    // how to pass orientation (360°) * distance to 2d coords
+    coords_heading = Utils::angle2coords(blackboxes[id]->orientation);
+    res_coords = coords_heading * (double)this->_speed;
+
+    blackboxes[id]->position.x = (res_coords.x);
+    blackboxes[id]->position.y = (res_coords.y);
+}
+
 //AIRCRAFT DEF END
 
 
-AWACS::AWACS()
+AWACS::AWACS(registry **regis)
 {
-
+    this->regis = *regis;
+    this->_atk = 0;
+    this->_def = 0;
+    this->_nb_missile = 0;
+    this->_fuel = 183; // as per 747 - 100 available numbers
 };
 
+/**
+ * @brief AWACS behaviour follows 3 priority in order
+ * 1: survive
+ * 2: provide datalink to its team mates
+ * 3: Loiter in the map
+ * 
+ * To survive the AWACS will always flee that means if pinged or targeted
+ * it will turn away
+ * To provide vision for its team mates awacs will move "Team forward" 
+ * and try to stay at a fair distance of 3 of its closest team mates
+ * if it cannot push up and but shouldn't flee (because it would go out of the map
+ * / leave its team mate behind) it will loiter around going to right and left of the map
+ * 
+ * further more AWACS speed is limit to 800px per min (~0.223 every 1/60th of second)
+ */
 void AWACS::update()
 {
-    
+    size_t id = Utils::get_self_id_from(*this, this->regis);
+    sparse_array<RADAR> &Radars = regis->get_components<RADAR>();
+    sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
+
+    this->_status = ATTACK;
+    double min_distance = WEZ;
+    size_t closest_ping = 0;
+
+    Radars[id]->IFF();
+    std::vector<flight_data_t> detections = Radars[id]->run();
+    for (size_t i = 0; detections.size(); i += 1) {
+        double distance = detections[i].position.get_distance(blackboxes[id]->position);
+        if (distance < min_distance) {
+            // flee for your life from the closest ping
+            this->_status = DEFEND;
+            min_distance = distance;
+            closest_ping = i;
+        }
+    }
+    if (this->_status == DEFEND) {
+        this->change_orientation(Utils::Normalize(detections[closest_ping].position.get_angle(blackboxes[id]->position)));
+    }
 }
 
 
-FIGHTER::FIGHTER(double fuel, int nb_missile, int def, int atk)
+FIGHTER::FIGHTER(registry **regis, double fuel, int nb_missile, int def, int atk)
 {
 }

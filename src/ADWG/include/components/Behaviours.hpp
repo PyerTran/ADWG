@@ -3,13 +3,25 @@
 
 #include "IBehaviours.hpp"
 #include "attributes.hpp"
+#include "registry_utils.hpp"
 #include "angle.hpp"
+
+#define AWACS_TOPSPEED 800
+#define FIGHTER_TOPSPEED 1600
+#define MISSILE_TOPSPEED 4000
+#define WEZ 100
+#define 
+
+enum STATUS {ATTACK, DEFEND, LOITER};
 
 class AIRCRAFT : public IBehaviours
 {
+    public:
+        
+
     protected:
         registry *regis;
-        int _speed;
+        double _speed;
         int _nb_missile;
         int _def;
         int _atk;
@@ -22,43 +34,45 @@ class AIRCRAFT : public IBehaviours
         int _changing_alt;
 
         // value added after each "tick" down of the timer
-        int _step_speed;
+        double _step_speed;
         double _step_orientation;
         int _step_alt;
 
-        void change_speed(int newspeed);
+        // cmd speed
+        void change_speed(double newspeed);
+        // cmd orientation
         void change_orientation(double neworientation);
+        // cmd alt
         void change_alt(int newalt);
 
         // update
         void update_speed();
         void update_orientation();
         void update_alt();
+
+        // writing the movement onto the registry
+        void move();
 };
 
 class AWACS : public AIRCRAFT {
     public:
-        AWACS();
+        AWACS(registry **regis);
         void update();
     private:
         //Datalink *dl // each team shared an instance of data link
-        
+        STATUS _status;
         void update_datalink();
-
 };
 
 class FIGHTER : public AIRCRAFT {
     public:
-        FIGHTER(double fuel, int nb_missile, int def, int atk);
-        void update();
-    private:
-        
-
+        FIGHTER(registry **regis, double fuel, int nb_missile, int def, int atk);
+        void update(); 
 };
 
 class MISSILE : public AIRCRAFT {
     public:
-        MISSILE();
+        MISSILE(registry **regis);
         void update();
 };
 
