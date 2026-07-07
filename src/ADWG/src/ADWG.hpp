@@ -11,7 +11,7 @@
 
 namespace adwg
 {
-    enum GameStat {Blue_Win, Red_Win, Mutual, OnGoing};
+    enum GameStat {Blue_Win, Red_Win, Mutual, OnGoing, Pause, Menu};
 
     class GAME {
         public:
@@ -19,6 +19,9 @@ namespace adwg
             
             GAME(Vector2<int> dimension);
             ~GAME();
+            void Menu();
+            void rungame();
+            void pause();
 
             void update_game();
         private:

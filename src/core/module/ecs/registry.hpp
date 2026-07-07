@@ -18,6 +18,10 @@
 class registry
 {
 public:
+    const size_t get_nb_entities() {
+        return this->_count_entity;
+    }
+
     template <class Component>
     sparse_array<Component> &register_component()
     {

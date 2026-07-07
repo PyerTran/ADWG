@@ -10,6 +10,7 @@ class Entity
     public:
         friend class registry;
         size_t get_size() {return(_size);}
+        
 
     private:
         explicit Entity(size_t size) : _size(size) {};

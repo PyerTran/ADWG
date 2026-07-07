@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "core.hpp"
+#include "MySfml.hpp"
 
 namespace SFgraphics {
 

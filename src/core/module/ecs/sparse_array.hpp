@@ -62,8 +62,8 @@ class sparse_array {
             return this->_data.size();
         }
 
-        Component at(size_t ite) {
-            return this->_data.at(ite).value();
+        value_type at(size_t ite) {
+            return this->_data.at(ite);
         }
     
         reference_type insert_at(size_type pos, Component const &new_component) {

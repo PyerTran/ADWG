@@ -2,25 +2,28 @@
 #define RADAR_HPP_
 
 #include <vector>
+#include <optional>
 
-#include "coordinates.hpp"
+#include "attributes.hpp"
+#include "registry.hpp"
+#include "Team.hpp"
+
 
  class RADAR
 {
     public:
-        RADAR(double field_of_view, double range, int n_DL)
-        {
-            this->fov = field_of_view;
-            this->range=range;
-            this->n_DL=n_DL;
-        }
-        
-        virtual std::vector<COORDS_t> run();
+        RADAR(double field_of_view, double range, int n_DL, registry *regis);        
+        std::vector<flight_data_t> run();
     private:
         double range;
         double fov;
         int n_DL;
-        float *orientation;
+        flight_data_t *blackbox;
+        registry *regis;
+        std::vector<int> enemy_ids;
+        std::vector<flight_data_t> detections;
+        void IFF();
+        
         
 };
 
