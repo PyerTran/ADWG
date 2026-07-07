@@ -4,6 +4,7 @@
 #include <vector>
 #include <optional>
 
+#include "angle.hpp"
 #include "attributes.hpp"
 #include "registry.hpp"
 #include "Team.hpp"

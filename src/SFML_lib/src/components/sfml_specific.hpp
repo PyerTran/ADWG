@@ -1,3 +1,6 @@
+#ifndef SFML_SPECIFIC_HPP_
+#define SFML_SPECIFIC_HPP_
+
 #include <SFML/Graphics.hpp>
 #include "MySfml.hpp"
 
@@ -21,3 +24,5 @@ namespace SFgraphics {
             sf::CircleShape *shape;
     };
 }
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef ADWG_HPP_
+#define ADWG_HPP_
+
 #include <string>
 #include "registry.hpp"
 #include "vector2.hpp"
@@ -29,3 +32,5 @@ namespace adwg
             IGraphicModule *graphics;
     };
 }
+
+#endif

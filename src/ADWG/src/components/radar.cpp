@@ -1,19 +1,5 @@
 #include "radar.hpp"
 
-// return 360° basis
-double Normalize(double a)
-{
-    while (a < 0) a += 360;
-    while (a >= 360) a -= 360;
-    return a;
-}
-
-// return a valued [-180°, 180°]
-double DeNormalize(double a)
-{
-    while (a > 180) a -= 360;
-    return a;
-}
 
 RADAR::RADAR(double field_of_view, double range, int n_DL, registry *regis)
 { 
@@ -73,9 +59,9 @@ std::vector<flight_data_t> RADAR::run()
             absolute_angle = selfpos.position.get_angle(pos.position); // between -180° and 180°
             //relative_angle = Normalize(absolute_angle) - Normalize(selfpos.orientation);
             if (lookover) {
-                relative_angle = absolute_angle - DeNormalize(selfpos.orientation); 
+                relative_angle = absolute_angle - Utils::DeNormalize(selfpos.orientation); 
             } else {
-                relative_angle = Normalize(absolute_angle) - selfpos.orientation;
+                relative_angle = Utils::Normalize(absolute_angle) - selfpos.orientation;
             }
             if (relative_angle > -this->fov && relative_angle < this->fov) {
                 this->detections.push_back(pos);

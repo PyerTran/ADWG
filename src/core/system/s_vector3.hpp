@@ -21,6 +21,7 @@ class Vector3
             return distance;
         }
 
+        // get the angle between self and endpoint [-180°, 180°]
         double get_angle(const Vector3<T> &vector_endpoint)
         {
             double radian_angle = 0;
