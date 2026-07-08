@@ -20,4 +20,10 @@ namespace SFgraphics {
         this->window.draw(*s);
     }
     
+    void MySFML::set_rotation(IEntityGraphics *eg, double orientation)
+    {
+        sf::CircleShape* shape = (sf::CircleShape*)eg->get_graphics();
+        sf::Angle angle = sf::degrees(orientation);
+        shape->setRotation(angle);
+    }
 }

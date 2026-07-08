@@ -241,4 +241,6 @@ namespace adwg
     inline void operator --(const Vector2<T>& left);
 }
 
+#include "vector2.inl"
+
 #endif

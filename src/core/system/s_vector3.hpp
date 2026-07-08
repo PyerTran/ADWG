@@ -75,4 +75,6 @@ inline void operator --(const Vector3<T>& left);
 
 }
 
+#include "s_vector3.inl"
+
 #endif

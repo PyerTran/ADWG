@@ -10,4 +10,6 @@ namespace Utils {
 
 }
 
+#include "registry_utils.inl"
+
 #endif

@@ -10,6 +10,7 @@ namespace SFgraphics {
         free(shape);
     }
 
+    // alawys a sf::circleshape
     void *SFEntityGraphics::get_graphics() {
         return this->shape;
     }
