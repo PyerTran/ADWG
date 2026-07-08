@@ -61,7 +61,6 @@ class AWACS : public AIRCRAFT {
     private:
         //Datalink *dl // each team shared an instance of data link
         STATUS _status;
-        void update_datalink();
 };
 
 class FIGHTER : public AIRCRAFT {

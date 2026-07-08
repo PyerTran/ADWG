@@ -16,6 +16,7 @@
         RADAR(double field_of_view, double range, int n_DL, registry *regis);        
         std::vector<flight_data_t> run();
         void IFF();
+        const int get_nb_DL();
     private:
         double range;
         double fov;

@@ -71,3 +71,7 @@ std::vector<flight_data_t> RADAR::run()
 
     return this->detections;
 }
+
+const int RADAR::get_nb_DL(){
+    return this->n_DL;
+}

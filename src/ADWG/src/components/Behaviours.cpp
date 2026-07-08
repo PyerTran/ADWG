@@ -3,6 +3,7 @@
 #include "datalink.hpp"
 #include "radar.hpp"
 #include "entity.hpp"
+#include <algorithm>
 
 // AIRCRAFT DEF
 
@@ -138,24 +139,29 @@ void AWACS::update()
     size_t id = Utils::get_self_id_from(*this, this->regis);
     sparse_array<RADAR> &Radars = regis->get_components<RADAR>();
     sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
+    sparse_array<Datalink> &datalinking = regis->get_components<Datalink>();
+    int n_dl = Radars[id]->get_nb_DL();
 
     this->_status = ATTACK;
-    double min_distance = WEZ;
-    size_t closest_ping = 0;
-
     Radars[id]->IFF();
     std::vector<flight_data_t> detections = Radars[id]->run();
-    for (size_t i = 0; detections.size(); i += 1) {
-        double distance = detections[i].position.get_distance(blackboxes[id]->position);
-        if (distance < min_distance) {
-            // flee for your life from the closest ping
-            this->_status = DEFEND;
-            min_distance = distance;
-            closest_ping = i;
-        }
+
+    // sort detection as the closest to farthest
+    std::sort(detections.begin(), detections.end(), [this](const flight_data_t &a, flight_data_t &b){
+        size_t id = Utils::get_self_id_from(*this, this->regis);
+        sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
+
+        double dist_a = blackboxes[id]->position.get_distance(a.position);
+        double dist_b = blackboxes[id]->position.get_distance(b.position);
+
+        return dist_a < dist_b;
+    });
+    datalinking[id]->pings = std::vector<flight_data_t>(detections);
+    if (detections[0].position.get_distance(blackboxes[id]->position) < WEZ) {
+        this->_status = DEFEND;
     }
     if (this->_status == DEFEND) {
-        this->change_orientation(Utils::Normalize(detections[closest_ping].position.get_angle(blackboxes[id]->position)));
+        this->change_orientation(Utils::Normalize(detections[0].position.get_angle(blackboxes[id]->position)));
     }
 }
 

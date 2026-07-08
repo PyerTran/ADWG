@@ -7,14 +7,11 @@
 
 class Datalink {
     public:
-        flight_data_t* get_datalink();
-        std::queue<flight_data_t> *get_datalink_stack();
+        std::vector<flight_data_t> *get_datalink();
 
     private:
         friend AWACS;
-        flight_data_t ping_list[6];
-        std::queue<flight_data_t> ping_stack;
-
+        std::vector<flight_data_t> pings;
 };
 
 #endif
