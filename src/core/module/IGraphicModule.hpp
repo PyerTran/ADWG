@@ -19,7 +19,8 @@ class IGraphicModule {
         // object draw
         virtual void draw_object(IEntityGraphics g, ObjectShape s);
 
-        // 
+        // rotation
+        virtual void set_rotation(IEntityGraphics g, double orientation);
 
         // debug_draw
         virtual void draw_radar_lines(int object_id);
