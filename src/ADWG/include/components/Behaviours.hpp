@@ -10,7 +10,7 @@
 #define FIGHTER_TOPSPEED 1600
 #define MISSILE_TOPSPEED 4000
 #define WEZ 100
-#define 
+
 
 enum STATUS {ATTACK, DEFEND, LOITER};
 
