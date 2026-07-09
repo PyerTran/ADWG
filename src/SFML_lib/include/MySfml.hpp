@@ -16,7 +16,7 @@ namespace SFgraphics
             void clear_window();
             void close_window();
 
-            void draw_object(IEntityGraphics *eg, ObjectShape s); //everything is a circle shape lmao
+            void draw_object(IEntityGraphics *eg); //everything is a circle shape lmao
             
             // orientation is on 360° basis
             void set_rotation(IEntityGraphics *eg, double orientation);

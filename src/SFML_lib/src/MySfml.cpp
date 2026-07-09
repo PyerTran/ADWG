@@ -14,7 +14,7 @@ namespace SFgraphics {
         this->window.display();
     }
 
-    void MySFML::draw_object(IEntityGraphics *eg, ObjectShape shape)
+    void MySFML::draw_object(IEntityGraphics *eg)
     {
         sf::CircleShape *s = (sf::CircleShape *)eg->get_graphics();
         this->window.draw(*s);

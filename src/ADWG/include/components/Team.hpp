@@ -3,32 +3,15 @@
 
 enum TEAM {RED, BLUE};
 
-class ITeam
+class Team
 {
     public:
-        virtual const int get_forward_as_angle();
-        virtual TEAM get_team();
-};
-
-class RED {
-    public:
-        RED();
-        const int get_forward_as_angle();
+        Team(TEAM team, double forward);
+        const double get_forward_as_angle();
         const TEAM get_team();
     private:
-        int forward;
-        TEAM red;
-
-};
-
-class BLUE {
-    public:
-        BLUE();
-        const int get_forward_as_angle();
-        const TEAM get_team();
-    private:
-        int forward;
-        TEAM blue;
+        double _forward;
+        TEAM _team;
 };
 
 #endif

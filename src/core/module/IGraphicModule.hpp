@@ -17,7 +17,7 @@ class IGraphicModule {
         virtual void close_window();
 
         // object draw
-        virtual void draw_object(IEntityGraphics g, ObjectShape s);
+        virtual void draw_object(IEntityGraphics g);
 
         // rotation
         virtual void set_rotation(IEntityGraphics g, double orientation);

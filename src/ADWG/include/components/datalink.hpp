@@ -7,7 +7,7 @@
 
 class Datalink {
     public:
-        std::vector<flight_data_t> *get_datalink();
+        std::vector<flight_data_t> get_datalink();
 
     private:
         friend AWACS;

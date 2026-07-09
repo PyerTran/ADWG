@@ -11,7 +11,7 @@ RADAR::RADAR(double field_of_view, double range, int n_DL, registry *regis)
 
 void RADAR::IFF()
 {
-    sparse_array<ITeam> tags = regis->get_components<ITeam>();
+    sparse_array<Team> tags = regis->get_components<Team>();
     sparse_array<RADAR> radars = regis->get_components<RADAR>();
     size_t id = radars.get_index(std::optional<RADAR>(*this));
     
@@ -19,7 +19,7 @@ void RADAR::IFF()
 
     for (size_t i = 0; i < tags.size(); i += 1)
     {
-        std::optional<ITeam> tag = tags.at(i);
+        std::optional<Team> tag = tags.at(i);
         if (tag.has_value()) {
             if (tag.value().get_team() != myteam) {
                 this->enemy_ids.push_back(i);

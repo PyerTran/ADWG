@@ -7,6 +7,12 @@
 
 #include "IGraphicModule.hpp"
 
+#include "Behaviours.hpp"
+#include "attributes.hpp"
+#include "Team.hpp"
+#include "radar.hpp"
+#include "datalink.hpp"
+
 #define WINDOW_WIDTH 1000
 #define WINDOW_HEIGHT 1000
 #define ENTITY_MAX_COUNT 32
@@ -19,17 +25,17 @@ namespace adwg
     class GAME {
         public:
             int GameState;
-            
-            GAME(Vector2<int> dimension);
+
+            GAME(Vector2<int> dimension, IGraphicModule *GPI, registry *regis);
             ~GAME();
-            void Menu();
-            void rungame();
-            void pause();
+            void runMenu();
+            void runGame();
+            void runPause();
 
             void update_game();
         private:
-            registry game_inventory;
-            IGraphicModule *graphics;
+            registry *game_inventory;
+            IGraphicModule *_GPI;
     };
 }
 
