@@ -6,10 +6,12 @@
 #include "registry_utils.hpp"
 #include "angle.hpp"
 
-#define AWACS_TOPSPEED 800
-#define FIGHTER_TOPSPEED 1600
-#define MISSILE_TOPSPEED 4000
+#define AWACS_TOPSPEED 800/60/60
+#define FIGHTER_TOPSPEED 1600/60/60
+#define MISSILE_TOPSPEED 4000/60/60
 #define WEZ 100
+#define WEZ_WARNING 150
+
 
 
 enum STATUS {ATTACK, DEFEND, LOITER};
@@ -33,17 +35,22 @@ class AIRCRAFT : public IBehaviours
         int _changing_orientation;
         int _changing_alt;
 
+        // new value of each attribut
+        double _newspeed;
+        double _neworientation;
+        double _newalt;
+
         // value added after each "tick" down of the timer
         double _step_speed;
         double _step_orientation;
-        int _step_alt;
+        double _step_alt;
 
         // cmd speed
         void change_speed(double newspeed);
-        // cmd orientation
+        // cmd orientation [0°, 360°[
         void change_orientation(double neworientation);
         // cmd alt
-        void change_alt(int newalt);
+        void change_alt(double newalt);
 
         // update
         void update_speed();
@@ -61,6 +68,23 @@ class AWACS : public AIRCRAFT {
     private:
         //Datalink *dl // each team shared an instance of data link
         STATUS _status;
+        
+        // locate your allies, closest to farthest
+        std::vector<flight_data_t> find_my_allies();
+        
+        /**
+         * @brief finds a coords where the AWACS should push
+         * 
+         * gather the average of the coords of its three closest allies
+         * theoreticaly this is where the AWACS is the safest
+         * altho the AWACS should stay slightly "behind" coords for safety reasons
+         * 
+         * @return adwg::Vector3<double> 
+         */
+        adwg::Vector3<double> where_to_push();
+        
+        // find a coords where the AWACS should be to overlook, without being in danger.
+        adwg::Vector3<double> safezone();
 };
 
 class FIGHTER : public AIRCRAFT {

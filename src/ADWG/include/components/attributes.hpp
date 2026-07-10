@@ -18,6 +18,8 @@ typedef struct craft_type_s
     CRAFT_TYPE type;
 }craft_type_t;
 
+
+//entities will be removed from the registry upon destruction, no need for this
 typedef struct death_s
 {
 
