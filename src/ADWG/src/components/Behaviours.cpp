@@ -200,6 +200,7 @@ void AWACS::update()
         
         break;
     }
+    this->move();
 }
 
 std::vector<flight_data_t> AWACS::find_my_allies()
@@ -274,7 +275,49 @@ void FIGHTER::update()
     size_t id = Utils::get_self_id_from(this, this->regis);
     sparse_array<RADAR> &Radars = regis->get_components<RADAR>();
     sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
+    sparse_array<Team> teams = regis->get_components<Team>();
     sparse_array<Datalink> &datalinking = regis->get_components<Datalink>();
 
-    this->_status = ATTACK; 
+    this->_status = ATTACK;
+    TEAM myteam = teams[id]->get_team();
+    double _forward_ = teams[id]->get_forward_as_angle();
+    Radars[id]->IFF();
+    std::vector<flight_data_t> detections = Radars[id]->run();
+    std::vector<flight_data_t> pings = datalinking[id]->get_datalink();
+
+    if (detections.empty() && pings.empty()) {
+        this->change_orientation(_forward_);
+        this->change_speed((FIGHTER_TOPSPEED)/2);
+        this->move();
+        return;
+    }
+    
+    std::sort(pings.begin(), pings.end(), [this](const flight_data_t &a, flight_data_t &b){
+        size_t id = Utils::get_self_id_from(this, this->regis);
+        sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
+
+        double dist_a = blackboxes[id]->position.get_distance(a.position);
+        double dist_b = blackboxes[id]->position.get_distance(b.position);
+
+        return dist_a < dist_b;
+    });
+    if (detections.empty()) {
+        this->change_orientation(
+            Utils::Normalize(
+                blackboxes[id]->position.get_angle(pings[0].position)
+            )
+        );
+        this->change_speed(FIGHTER_TOPSPEED);
+    }
+    std::sort(detections.begin(), detections.end(), [this](const flight_data_t &a, flight_data_t &b){
+        size_t id = Utils::get_self_id_from(this, this->regis);
+        sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
+
+        double dist_a = blackboxes[id]->position.get_distance(a.position);
+        double dist_b = blackboxes[id]->position.get_distance(b.position);
+
+        return dist_a < dist_b;
+    });
+
+    this->move();
 }
