@@ -8,4 +8,4 @@ add_subdirectory(ADWG) #ADWG
 
 add_executable(${PROJECT_NAME} ./main.cpp)
 
-target_link_libraries(${PROJECT_NAME} CORE MySFML)
+target_link_libraries(${PROJECT_NAME} CORE MySFML ADWG)

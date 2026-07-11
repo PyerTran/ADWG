@@ -28,7 +28,7 @@ void AIRCRAFT::change_speed(double newspeed)
 
 void AIRCRAFT::update_alt()
 {
-    size_t id = Utils::get_self_id_from(*this, this->regis);
+    size_t id = Utils::get_self_id_from(this, this->regis);
     sparse_array<flight_data_t> &blackboxes = regis->get_components<flight_data_t>();
 
     if (this->_changing_alt <= 0) {
@@ -40,7 +40,7 @@ void AIRCRAFT::update_alt()
 
 void AIRCRAFT::change_alt(double newalt)
 {
-    size_t id = Utils::get_self_id_from(*this, this->regis);
+    size_t id = Utils::get_self_id_from(this, this->regis);
     sparse_array<flight_data_t> &blackboxes = regis->get_components<flight_data_t>();
 
     int coeff = 2;
@@ -59,7 +59,7 @@ void AIRCRAFT::change_alt(double newalt)
 
 void AIRCRAFT::update_orientation()
 {
-    size_t id = Utils::get_self_id_from(*this, this->regis);
+    size_t id = Utils::get_self_id_from(this, this->regis);
     sparse_array<flight_data_t> &blackboxes = regis->get_components<flight_data_t>();
 
     if (this->_changing_orientation <= 0) {
@@ -73,7 +73,7 @@ void AIRCRAFT::update_orientation()
 
 void AIRCRAFT::change_orientation(double neworientation)
 {
-    size_t id = Utils::get_self_id_from(*this, this->regis);
+    size_t id = Utils::get_self_id_from(this, this->regis);
     sparse_array<flight_data_t> &blackboxes = regis->get_components<flight_data_t>();
 
     double orientation_diff = 0;
@@ -93,7 +93,7 @@ void AIRCRAFT::change_orientation(double neworientation)
 
 void AIRCRAFT::move()
 {
-    size_t id = Utils::get_self_id_from(*this, this->regis);
+    size_t id = Utils::get_self_id_from(this, this->regis);
     sparse_array<flight_data_t> &blackboxes = regis->get_components<flight_data_t>();
     adwg::Vector2<double> coords_heading;
     adwg::Vector2<double> res_coords;
@@ -112,7 +112,7 @@ void AIRCRAFT::move()
 
 void AIRCRAFT::plot_course(adwg::Vector3<double> coords, double speed)
 {
-    size_t id = Utils::get_self_id_from(*this, this->regis);
+    size_t id = Utils::get_self_id_from(this, this->regis);
     sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
     
     adwg::Vector3<double> selfpos = blackboxes[id]->position;
@@ -151,7 +151,7 @@ AWACS::AWACS(registry **regis)
  */
 void AWACS::update()
 {
-    size_t id = Utils::get_self_id_from(*this, this->regis);
+    size_t id = Utils::get_self_id_from(this, this->regis);
     sparse_array<RADAR> &Radars = regis->get_components<RADAR>();
     sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
     sparse_array<Datalink> &datalinking = regis->get_components<Datalink>();
@@ -164,7 +164,7 @@ void AWACS::update()
 
     // sort detection as the closest to farthest
     std::sort(detections.begin(), detections.end(), [this](const flight_data_t &a, flight_data_t &b){
-        size_t id = Utils::get_self_id_from(*this, this->regis);
+        size_t id = Utils::get_self_id_from(this, this->regis);
         sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
 
         double dist_a = blackboxes[id]->position.get_distance(a.position);
@@ -204,7 +204,7 @@ void AWACS::update()
 
 std::vector<flight_data_t> AWACS::find_my_allies()
 {
-    size_t id = Utils::get_self_id_from(*this, this->regis);
+    size_t id = Utils::get_self_id_from(this, this->regis);
     sparse_array<Team> teams = this->regis->get_components<Team>();
     sparse_array<flight_data_t> blackboxes = this->regis->get_components<flight_data_t>();
     std::vector<flight_data_t> allies;
@@ -219,7 +219,7 @@ std::vector<flight_data_t> AWACS::find_my_allies()
         }
     }
     std::sort(allies.begin(), allies.end(), [this](const flight_data_t &a, flight_data_t &b){
-        size_t id = Utils::get_self_id_from(*this, this->regis);
+        size_t id = Utils::get_self_id_from(this, this->regis);
         sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
 
         double dist_a = blackboxes[id]->position.get_distance(a.position);
@@ -232,7 +232,7 @@ std::vector<flight_data_t> AWACS::find_my_allies()
 
 adwg::Vector3<double> AWACS::where_to_push()
 {
-    size_t id = Utils::get_self_id_from(*this, this->regis);
+    size_t id = Utils::get_self_id_from(this, this->regis);
     sparse_array<flight_data_t> &blackboxes = this->regis->get_components<flight_data_t>();
     adwg::Vector3<double> coords;
 
@@ -248,5 +248,14 @@ adwg::Vector3<double> AWACS::where_to_push()
 }
 
 FIGHTER::FIGHTER(registry **regis, double fuel, int nb_missile, int def, int atk)
+{
+    this->regis = *regis;
+    this->_fuel = fuel;
+    this->_nb_missile = nb_missile;
+    this->_def = def;
+    this->_atk = atk;
+}
+
+void FIGHTER::update()
 {
 }

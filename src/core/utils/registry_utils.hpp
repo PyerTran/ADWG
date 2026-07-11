@@ -6,7 +6,7 @@
 namespace Utils {
 
     template<typename T>
-    inline const size_t get_self_id_from(T self, registry *regis);
+    inline const size_t get_self_id_from(T *self, registry *regis);
 
 }
 

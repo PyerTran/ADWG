@@ -4,11 +4,11 @@ add_library(CORE ./utils/angle.cpp)
 
 target_include_directories(CORE
     PUBLIC
-    ./module/ecs)
+    ./module)
 
 target_include_directories(CORE
     PUBLIC
-    ./module)
+    ./module/ecs)
 
 target_include_directories(CORE
     PUBLIC

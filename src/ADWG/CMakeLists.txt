@@ -10,6 +10,10 @@ add_library(ADWG ./src/ADWG.cpp ${all_COMPONENTS})
 
 target_include_directories(ADWG
     PUBLIC
+    ./src)
+
+target_include_directories(ADWG
+    PUBLIC
     ./include/components)
 
 add_dependencies(CORE)

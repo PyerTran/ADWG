@@ -112,12 +112,12 @@ class sparse_array {
             // _data.erase(_data.begin() + pos);
         }
 
-        size_type get_index(value_type const &elem) const
+        size_type get_index(Component const *elem) const
         {
             int i = 0;
 
             for (i = 0; i < _data.size(); i++) {
-                if (_data[i] == elem)
+                if (_data[i].has_value() && &*_data[i] == elem)
                     return i;
             }
             return 42;

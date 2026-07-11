@@ -19,7 +19,7 @@ inline Vector3<T> &operator +=(Vector3<T> &left, const Vector3<T> &right)
 {
     left.x += right.x;
     left.y += right.y;
-    left.z += right.z
+    left.z += right.z;
     return left;
 }
 
@@ -28,7 +28,7 @@ inline Vector3<T>& operator -=(Vector3<T> &left, const Vector3<T> &right)
 {
     left.x -= right.x;
     left.y -= right.y;
-    left.z -= right.z
+    left.z -= right.z;
     return left;
 }
 

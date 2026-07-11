@@ -17,7 +17,7 @@ class Vector3
         {
             Vector3<T> res = Vector3(vector_endpoint);
             res -= *this;
-            T distance = (T)sqrt((res.x**2 + res.y**2 + res.z**2));
+            T distance = (T)sqrt(pow(res.x,2) + pow(res.y,2) + pow(res.z,2));
             return distance;
         }
 

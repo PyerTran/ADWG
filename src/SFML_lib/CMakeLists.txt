@@ -22,4 +22,5 @@ target_include_directories(MySFML
     PUBLIC
     ./src/components/)
 
-target_link_libraries(MySFML sfml-graphics sfml-system)
+
+target_link_libraries(MySFML CORE sfml-graphics sfml-system sfml-window)

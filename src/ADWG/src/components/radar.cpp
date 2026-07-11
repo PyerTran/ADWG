@@ -13,7 +13,7 @@ void RADAR::IFF()
 {
     sparse_array<Team> tags = regis->get_components<Team>();
     sparse_array<RADAR> radars = regis->get_components<RADAR>();
-    size_t id = radars.get_index(std::optional<RADAR>(*this));
+    size_t id = radars.get_index(this);
     
     TEAM myteam = tags.at(id).value().get_team();
 
@@ -37,7 +37,7 @@ std::vector<flight_data_t> RADAR::run()
     double relative_angle;
     bool lookover = true;
     sparse_array<RADAR> radars = regis->get_components<RADAR>();
-    size_t id = radars.get_index(std::optional<RADAR>(*this));
+    size_t id = radars.get_index(this);
     
     // relative postion detection
     sparse_array<flight_data_t> positions = regis->get_components<flight_data_t>();

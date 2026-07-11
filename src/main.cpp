@@ -1,6 +1,6 @@
 #include "ADWG.hpp"
 
-void main() 
+int main() 
 {
-    return;
+    return 1;
 }
