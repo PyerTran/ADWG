@@ -218,6 +218,7 @@ std::vector<flight_data_t> AWACS::find_my_allies()
             allies.push_back(*blackboxes[i]);
         }
     }
+    // closest to farthest
     std::sort(allies.begin(), allies.end(), [this](const flight_data_t &a, flight_data_t &b){
         size_t id = Utils::get_self_id_from(this, this->regis);
         sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
@@ -256,6 +257,24 @@ FIGHTER::FIGHTER(registry **regis, double fuel, int nb_missile, int def, int atk
     this->_atk = atk;
 }
 
+/**
+ * @brief FIGTHER Behaviour follows 3 directives
+ * 1 : attack
+ * 2 : Defend AWACS
+ * 3 : survive
+ * 
+ * to attack it will either head for the closest target on datalink or go "forward"
+ * to defend the awacs it will engage the closest target to the AWACS
+ * to survive it will defend from missile approach either notching or go away
+ * 
+ * the distance at which these priorities will activate depends on the atk and def stat
+ */
 void FIGHTER::update()
 {
+    size_t id = Utils::get_self_id_from(this, this->regis);
+    sparse_array<RADAR> &Radars = regis->get_components<RADAR>();
+    sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
+    sparse_array<Datalink> &datalinking = regis->get_components<Datalink>();
+
+    this->_status = ATTACK; 
 }

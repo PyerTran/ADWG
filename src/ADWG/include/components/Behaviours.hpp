@@ -6,9 +6,13 @@
 #include "registry_utils.hpp"
 #include "angle.hpp"
 
+// 1sec of fly time is ~13.34px
 #define AWACS_TOPSPEED 800 /60/60
+// 1sec of fly time is ~26.67px
 #define FIGHTER_TOPSPEED 1600 /60/60
+// 1sec of fly time is ~66.67px
 #define MISSILE_TOPSPEED 4000 /60/60
+// missiles have 1.5sec of fly time covering ~100.01px 
 #define WEZ 100
 #define WEZ_WARNING 150
 
@@ -94,6 +98,11 @@ class FIGHTER : public AIRCRAFT {
     public:
         FIGHTER(registry **regis, double fuel, int nb_missile, int def, int atk);
         void update(); 
+    private:
+        STATUS _status;
+        adwg::Vector3<double> intercept();
+        adwg::Vector3<double> boogeydo();
+        void missile_launch();
 };
 
 class MISSILE : public AIRCRAFT {
