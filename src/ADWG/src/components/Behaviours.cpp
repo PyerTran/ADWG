@@ -110,6 +110,18 @@ void AIRCRAFT::move()
     blackboxes[id]->position.y += (res_coords.y);
 }
 
+void AIRCRAFT::plot_course(adwg::Vector3<double> coords, double speed)
+{
+    size_t id = Utils::get_self_id_from(*this, this->regis);
+    sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
+    
+    adwg::Vector3<double> selfpos = blackboxes[id]->position;
+    // between -180° and 180°
+    double absolute_angle = selfpos.get_angle(coords);
+    this->change_orientation(Utils::Normalize(absolute_angle));
+    this->change_speed(speed);
+}
+
 //AIRCRAFT DEF END
 
 
@@ -143,8 +155,9 @@ void AWACS::update()
     sparse_array<RADAR> &Radars = regis->get_components<RADAR>();
     sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
     sparse_array<Datalink> &datalinking = regis->get_components<Datalink>();
-    int n_dl = Radars[id]->get_nb_DL();
 
+    double prescribe_speed = AWACS_TOPSPEED;
+    adwg::Vector3<double> push_point;
     this->_status = ATTACK;
     Radars[id]->IFF();
     std::vector<flight_data_t> detections = Radars[id]->run();
@@ -164,8 +177,28 @@ void AWACS::update()
     if (detections[0].position.get_distance(blackboxes[id]->position) < WEZ) {
         this->_status = DEFEND;
     }
+    /*
     if (this->_status == DEFEND) {
         this->change_orientation(Utils::Normalize(detections[0].position.get_angle(blackboxes[id]->position)));
+        this->change_speed(AWACS_TOPSPEED);
+    }*/
+    switch (this->_status)
+    {
+    case DEFEND:
+        /* code */
+        this->change_orientation(Utils::Normalize(detections[0].position.get_angle(blackboxes[id]->position)));
+        this->change_speed(AWACS_TOPSPEED);
+        break;
+    case ATTACK:
+        push_point = this->where_to_push();
+        if (push_point.get_distance(blackboxes[id]->position) < WEZ_WARNING) {
+            prescribe_speed /= 2;
+        }
+        this->plot_course(push_point, prescribe_speed);
+        break;
+    default:
+        
+        break;
     }
 }
 
@@ -204,10 +237,10 @@ adwg::Vector3<double> AWACS::where_to_push()
     adwg::Vector3<double> coords;
 
     std::vector<flight_data_t> allies = this->find_my_allies();
-    size_t n = 0;
-    for (n = 0; n < 3 && n < allies.size(); n += 1)
+    size_t n = 1;
+    for (n = 1; n <= 3 && n <= allies.size(); n += 1)
     {
-        coords += allies[n].position;   
+        coords += allies[n - 1].position;   
     }
     coords = coords / (double)n;
 

@@ -6,9 +6,9 @@
 #include "registry_utils.hpp"
 #include "angle.hpp"
 
-#define AWACS_TOPSPEED 800/60/60
-#define FIGHTER_TOPSPEED 1600/60/60
-#define MISSILE_TOPSPEED 4000/60/60
+#define AWACS_TOPSPEED 800 /60/60
+#define FIGHTER_TOPSPEED 1600 /60/60
+#define MISSILE_TOPSPEED 4000 /60/60
 #define WEZ 100
 #define WEZ_WARNING 150
 
@@ -59,6 +59,9 @@ class AIRCRAFT : public IBehaviours
 
         // writing the movement onto the registry
         void move();
+
+        // plot the course from coords
+        void plot_course(adwg::Vector3<double> coords, double speed);
 };
 
 class AWACS : public AIRCRAFT {
