@@ -17,6 +17,8 @@
         std::vector<flight_data_t> run();
         void IFF();
         const int get_nb_DL();
+
+        void lock_target(size_t id, size_t my_id);
     private:
         double range;
         double fov;

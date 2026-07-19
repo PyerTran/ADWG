@@ -284,6 +284,7 @@ void FIGHTER::update()
     Radars[id]->IFF();
     std::vector<flight_data_t> detections = Radars[id]->run();
     std::vector<flight_data_t> pings = datalinking[id]->get_datalink();
+    flight_data_t *TRK = NULL;
 
     if (detections.empty() && pings.empty()) {
         this->change_orientation(_forward_);
@@ -308,16 +309,19 @@ void FIGHTER::update()
             )
         );
         this->change_speed(FIGHTER_TOPSPEED);
+    } else {
+        std::sort(detections.begin(), detections.end(), [this](const flight_data_t &a, flight_data_t &b){
+            size_t id = Utils::get_self_id_from(this, this->regis);
+            sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
+
+            double dist_a = blackboxes[id]->position.get_distance(a.position);
+            double dist_b = blackboxes[id]->position.get_distance(b.position);
+
+            return dist_a < dist_b;
+        });
+        TRK = &detections[0];
     }
-    std::sort(detections.begin(), detections.end(), [this](const flight_data_t &a, flight_data_t &b){
-        size_t id = Utils::get_self_id_from(this, this->regis);
-        sparse_array<flight_data_t> blackboxes = regis->get_components<flight_data_t>();
-
-        double dist_a = blackboxes[id]->position.get_distance(a.position);
-        double dist_b = blackboxes[id]->position.get_distance(b.position);
-
-        return dist_a < dist_b;
-    });
+    // if TRK && TRK in WEZ "attack" stick for ATK/WEZ conjecture => defend when locked and in WEZ/2 + Def
 
     this->move();
 }

@@ -1,4 +1,5 @@
 #include "radar.hpp"
+#include "rwr.hpp"
 
 
 RADAR::RADAR(double field_of_view, double range, int n_DL, registry *regis)
@@ -64,6 +65,7 @@ std::vector<flight_data_t> RADAR::run()
                 relative_angle = Utils::Normalize(absolute_angle) - selfpos.orientation;
             }
             if (relative_angle > -this->fov && relative_angle < this->fov) {
+                this->lock_target(i, id);
                 this->detections.push_back(pos);
             }
         }
@@ -74,4 +76,17 @@ std::vector<flight_data_t> RADAR::run()
 
 const int RADAR::get_nb_DL(){
     return this->n_DL;
+}
+
+void RADAR::lock_target(size_t id, size_t my_id)
+{
+    sparse_array<RWR> warnings = this->regis->get_components<RWR>();
+    sparse_array<flight_data_t> blackboxes = this->regis->get_components<flight_data_t>();
+    
+    if (blackboxes[id].has_value() && blackboxes[my_id].has_value() && warnings[id]) {
+        return;
+    }
+
+    double incidence = blackboxes[id]->position.get_angle(blackboxes[my_id]->position);
+    warnings[id]->_spike_incidences.push_back(incidence);
 }
